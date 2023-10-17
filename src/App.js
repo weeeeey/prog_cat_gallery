@@ -2,6 +2,7 @@ import Loading from './Loading.js';
 import Breadcrumb from './Breadcrumb.js';
 import Node from './Node.js';
 import { loading_req } from './Api.js';
+import ImageViewer from './ImageViewer.js';
 
 const cache = {};
 
@@ -68,9 +69,10 @@ export default function App($app) {
                 } else if (node.type === 'FILE') {
                     this.setState({
                         ...this.state,
-                        seletedFilePath: node.filepath,
+                        selectedFilePath: node.filePath,
                     });
                 }
+                console.log(node);
             } catch (error) {
                 throw new Error(error.message);
             }
@@ -92,11 +94,21 @@ export default function App($app) {
             }
         },
     });
+    const imageView = new ImageViewer({
+        $app,
+        initialState: this.state.seletedFilePath,
+        onClick: (e) => {
+            if (e.target.nodeName !== 'IMG')
+                this.setState({ ...this.state, seletedFilePath: null });
+        },
+    });
+
     this.setState = (nextState) => {
         this.state = nextState;
         breadcrumb.setState(this.state.depth);
         nodes.setState({ isRoot: this.state.isRoot, nodes: this.state.nodes });
         loading.setState(this.state.isLoading);
+        imageView.setState(this.state.seletedFilePath);
     };
 
     this.init = async () => {
