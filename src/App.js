@@ -1,3 +1,4 @@
+import Loading from './Loading.js';
 import Breadcrumb from './Breadcrumb.js';
 import Node from './Node.js';
 import { loading_req } from './Api.js';
@@ -12,7 +13,10 @@ export default function App($app) {
         seletedFilePath: null,
         isLoading: false,
     };
-
+    const loading = new Loading({
+        $app,
+        initialState: this.state.isLoading,
+    });
     const breadcrumb = new Breadcrumb({
         $app,
         initialState: this.state.depth,
@@ -92,6 +96,7 @@ export default function App($app) {
         this.state = nextState;
         breadcrumb.setState(this.state.depth);
         nodes.setState({ isRoot: this.state.isRoot, nodes: this.state.nodes });
+        loading.setState(this.state.isLoading);
     };
 
     this.init = async () => {
